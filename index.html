@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Subnet Planner</title>
+  <meta name="description" content="VLSM subnet planner and IPv4 calculator that generates Cisco and MikroTik configs.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧮</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">🧮 <b>Subnet Planner</b></div>
+    <nav role="tablist">
+      <button role="tab" data-tab="vlsm" aria-selected="true">VLSM planner</button>
+      <button role="tab" data-tab="calc" aria-selected="false">Subnet calculator</button>
+    </nav>
+    <a class="gh" href="https://github.com/anas352/subnet-planner" target="_blank" rel="noopener">GitHub</a>
+  </header>
+
+  <main>
+    <!-- ================= VLSM ================= -->
+    <section id="tab-vlsm">
+      <div class="grid2">
+        <div class="card">
+          <h2>1 · Address block</h2>
+          <label class="field">Network to divide
+            <input id="base" value="192.168.0.0/22" spellcheck="false" autocomplete="off">
+          </label>
+          <label class="check"><input type="checkbox" id="allow31"> Use /31 for 2-host links (RFC 3021)</label>
+          <p class="hint">Subnets are allocated largest-first, so every block is aligned and nothing is wasted between them.</p>
+        </div>
+        <div class="card">
+          <div class="row-head"><h2>2 · Subnets</h2>
+            <div class="btns"><button class="ghost" id="example">Example</button><button class="ghost" id="clear">Clear</button></div>
+          </div>
+          <table class="inputs"><thead><tr><th>Name</th><th>Hosts needed</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+          <button class="ghost" id="add">+ Add subnet</button>
+        </div>
+      </div>
+
+      <div id="error" class="error" hidden></div>
+
+      <div id="result" hidden>
+        <div class="stats" id="stats"></div>
+        <div class="card">
+          <div class="row-head"><h2>Address space</h2><button class="ghost" id="share">🔗 Copy share link</button></div>
+          <div class="space" id="space"></div>
+          <div class="legend" id="legend"></div>
+          <div class="scroll"><table class="data" id="table"></table></div>
+        </div>
+
+        <div class="card">
+          <div class="row-head"><h2>3 · Generate config</h2>
+            <div class="seg" role="tablist" id="fmt">
+              <button data-fmt="cisco" aria-selected="true">Cisco</button>
+              <button data-fmt="mikrotik" aria-selected="false">MikroTik</button>
+              <button data-fmt="csv" aria-selected="false">CSV</button>
+            </div>
+          </div>
+          <div class="opts">
+            <label>First VLAN <input id="vlan" type="number" value="10" min="1" max="4000"></label>
+            <label>DNS server <input id="dns" value="8.8.8.8"></label>
+            <label id="parentWrap">Parent interface <input id="parent" value="bridge"></label>
+            <label class="check"><input type="checkbox" id="dhcp" checked> DHCP</label>
+          </div>
+          <pre id="config"></pre>
+          <div class="btns"><button id="copy">Copy</button><button class="ghost" id="download">Download</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Calculator ================= -->
+    <section id="tab-calc" hidden>
+      <div class="card">
+        <h2>IPv4 subnet calculator</h2>
+        <label class="field">IP address with prefix or mask
+          <input id="calcInput" value="192.168.10.77/26" spellcheck="false" autocomplete="off">
+        </label>
+        <p class="hint">Examples: <code>10.1.2.3/20</code> · <code>172.16.5.9 255.255.255.0</code></p>
+      </div>
+      <div id="calcError" class="error" hidden></div>
+      <div class="card" id="calcOut" hidden>
+        <div class="scroll"><table class="kv" id="calcTable"></table></div>
+      </div>
+      <div class="card" id="splitCard" hidden>
+        <div class="row-head"><h2>Split into equal subnets</h2>
+          <label class="inline">New prefix <select id="splitPrefix"></select></label></div>
+        <div class="scroll"><table class="data" id="splitTable"></table></div>
+      </div>
+    </section>
+  </main>
+  <footer>Everything runs in your browser · MIT © 2026 Anas</footer>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
